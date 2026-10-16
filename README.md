@@ -9,24 +9,24 @@ The user enters an origin, a destination, a departure time and a load weight. Th
 - **checkpoints** along each route (every 10, 25 or 50 miles, depending on route length) with their ETA, weather and risk level
 - a **weather heatmap** along the trip corridor, with a 0–48 hour forecast slider that also shows where the truck is at that hour
 
-This repo is frontend only. The API lives in the companion Django project (`routing`).
+This repo is frontend only. The API lives in the companion Django project.
 
 ## Tech stack
 
-| Concern           | Library                                                                  |
-| ----------------- | ------------------------------------------------------------------------ |
-| Build / dev       | [Vite](https://vite.dev) + React 19 + TypeScript                         |
-| Routing           | [React Router](https://reactrouter.com)                                  |
-| UI components     | [shadcn/ui](https://ui.shadcn.com) (Radix) + [Tailwind CSS v4](https://tailwindcss.com) |
-| Map               | [MapLibre GL JS](https://maplibre.org) via [react-map-gl](https://visgl.github.io/react-map-gl/) |
-| Map tiles         | [OpenFreeMap](https://openfreemap.org) (free, no key)                    |
-| Address search    | [Geoapify Autocomplete API](https://www.geoapify.com/address-autocomplete/) |
-| Server state      | [TanStack Query](https://tanstack.com/query)                             |
-| Client state      | [Zustand](https://zustand.docs.pmnd.rs)                                  |
-| HTTP client       | [Ky](https://github.com/sindresorhus/ky)                                 |
-| Validation        | [Zod](https://zod.dev)                                                   |
-| Dates             | [date-fns](https://date-fns.org)                                         |
-| Toasts            | [Sonner](https://sonner.emilkowal.ski)                                   |
+| Concern        | Library                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| Build / dev    | [Vite](https://vite.dev) + React 19 + TypeScript                                                 |
+| Routing        | [React Router](https://reactrouter.com)                                                          |
+| UI components  | [shadcn/ui](https://ui.shadcn.com) (Radix) + [Tailwind CSS v4](https://tailwindcss.com)          |
+| Map            | [MapLibre GL JS](https://maplibre.org) via [react-map-gl](https://visgl.github.io/react-map-gl/) |
+| Map tiles      | [OpenFreeMap](https://openfreemap.org) (free, no key)                                            |
+| Address search | [Geoapify Autocomplete API](https://www.geoapify.com/address-autocomplete/)                      |
+| Server state   | [TanStack Query](https://tanstack.com/query)                                                     |
+| Client state   | [Zustand](https://zustand.docs.pmnd.rs)                                                          |
+| HTTP client    | [Ky](https://github.com/sindresorhus/ky)                                                         |
+| Validation     | [Zod](https://zod.dev)                                                                           |
+| Dates          | [date-fns](https://date-fns.org)                                                                 |
+| Toasts         | [Sonner](https://sonner.emilkowal.ski)                                                           |
 
 ## Getting started
 
@@ -52,7 +52,7 @@ cp .env.example .env
 
 | Variable                | Required | Description                                                      |
 | ----------------------- | -------- | ---------------------------------------------------------------- |
-| `VITE_GEOAPIFY_API_KEY` | Yes      | Geoapify key used for origin and destination autocomplete       |
+| `VITE_GEOAPIFY_API_KEY` | Yes      | Geoapify key used for origin and destination autocomplete        |
 | `VITE_BACKEND_URL_DEV`  | Yes      | Backend base URL in development, e.g. `http://127.0.0.1:8000/`   |
 | `VITE_BACKEND_URL_PROD` | For prod | Backend base URL used when `VITE_ENVIRONMENT=production`         |
 | `VITE_ENVIRONMENT`      | Yes      | `development` or `production`; selects which backend URL is used |
@@ -69,15 +69,15 @@ npm run dev
 
 Open **http://127.0.0.1:5173**.
 
-> Use `127.0.0.1`, not `localhost`. The backend's CORS setting (`FRONTEND_URL`) allows `http://127.0.0.1:5173` by default, so requests from `localhost` are blocked unless you change it there.
+> You may also use `localhost`. The backend's CORS allows both
 
 ### Other scripts
 
-| Command           | What it does                         |
-| ----------------- | ------------------------------------ |
-| `npm run build`   | Type-check and build to `dist/`      |
-| `npm run preview` | Serve the production build locally   |
-| `npm run lint`    | Run ESLint                           |
+| Command           | What it does                       |
+| ----------------- | ---------------------------------- |
+| `npm run build`   | Type-check and build to `dist/`    |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint`    | Run ESLint                         |
 
 ## How it works
 
@@ -128,12 +128,6 @@ Each component folder exposes its public members through an `index.ts`.
 - **Zustand for state shared across pages.** The plan has to outlive the form page, and the map and sidebar both read and change the selected route, slider hour and focused checkpoint. Small, separate stores avoid passing props through every layer.
 - **Ky over fetch or axios.** It's small, built on fetch, and has typed errors, timeouts and per-instance defaults. The Geoapify instance sets `retry: 0` and attaches the key once.
 - **Plain React state + Zod for the form.** The form only has a few fields. Validation runs on submit, then live once the user has tried to submit.
-- **Custom autocomplete over Geoapify's widget.** The official `@geoapify/geocoder-autocomplete` draws its own input and styles. A shadcn `Command` dropdown backed by TanStack Query matches the UI and gives tight control over request volume:
-  - waits 400 ms after the user stops typing
-  - needs at least 3 characters
-  - caches results so retyping a query never refetches
-  - cancels a stale request when a newer one starts
-  - no retries
 - **MapLibre + OpenFreeMap.** Open-source vector maps with free tiles and no key, so browsing the map doesn't use Geoapify credits.
 - **Heatmap drawn as blurred risk-coloured circles, not a density heatmap.** A density heatmap adds overlapping points together, and checkpoints are dense along the corridor, so many Low points would look "hot". Here the colour always equals the forecast risk at that spot.
 - **Theme tokens as CSS variables.** Risk and route colours are defined in `index.css` for light and dark. MapLibre draws on a canvas and can't read `var(--x)`, so `useMapColors` reads the values at runtime and re-reads them when the theme changes.
