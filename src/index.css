@@ -196,6 +196,19 @@ code {
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* Weather risk levels (hex so MapLibre can read them too) */
+    --risk-low: #16a34a;
+    --risk-moderate: #ca8a04;
+    --risk-high: #ea580c;
+    --risk-severe: #dc2626;
+    --risk-no-travel: #7e22ce;
+    --risk-unknown: #94a3b8;
+
+    /* Map routes */
+    --route-selected: #2563eb;
+    --route-inactive: #94a3b8;
+    --route-casing: #ffffff;
 }
 /* 
 ---break--- */
@@ -231,6 +244,17 @@ code {
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+
+    --risk-low: #22c55e;
+    --risk-moderate: #eab308;
+    --risk-high: #f97316;
+    --risk-severe: #ef4444;
+    --risk-no-travel: #a855f7;
+    --risk-unknown: #64748b;
+
+    --route-selected: #60a5fa;
+    --route-inactive: #64748b;
+    --route-casing: #0f172a;
 }
 /* 
 ---break--- */
@@ -244,4 +268,31 @@ code {
   html {
     @apply font-sans;
     }
+}
+/* MapLibre popups follow the app theme */
+.maplibregl-popup {
+  /* Above HTML markers (route labels, truck) */
+  z-index: 5;
+}
+.maplibregl-popup-content {
+  @apply rounded-lg border bg-popover p-3 text-popover-foreground shadow-md;
+}
+.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--popover);
+}
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--popover);
+}
+.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--popover);
+}
+.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--popover);
+}
+.maplibregl-popup-close-button {
+  @apply px-1.5 text-base text-muted-foreground hover:bg-transparent hover:text-foreground;
 }

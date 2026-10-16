@@ -1,4 +1,4 @@
-import { TripForm } from "@/components";
+import { TripForm } from "@/components/trip-form";
 import {
   Card,
   CardContent,
