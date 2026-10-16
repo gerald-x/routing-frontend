@@ -1,9 +1,13 @@
 import { api } from "@/client";
-import type { TripRequest } from "@/types";
+import type { TripPlan, TripRequest } from "@/types";
 
-// The backend only exposes `api/` so far. Update this once the trip route exists.
-export const PLAN_TRIP_ENDPOINT = "api/routing/";
+export const PLAN_TRIP_ENDPOINT = "api/routing/trips/plan/";
+
+// The backend calls the routing and weather APIs for every checkpoint, so allow it time
+const PLAN_TRIP_TIMEOUT_MS = 90_000;
 
 export function planTrip(payload: TripRequest) {
-  return api.post(PLAN_TRIP_ENDPOINT, { json: payload }).json<unknown>();
+  return api
+    .post(PLAN_TRIP_ENDPOINT, { json: payload, timeout: PLAN_TRIP_TIMEOUT_MS })
+    .json<TripPlan>();
 }
