@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2Icon } from "lucide-react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { usePlanTrip } from "@/hooks";
+import { getErrorMessage } from "@/lib/errors";
 import { tripFormSchema } from "@/schemas/trip";
+import { useTripPlanStore, useTripViewStore } from "@/store";
 import type { TripFormDraft, TripFormErrors } from "@/types";
 import { AddressAutocomplete } from "./address-autocomplete";
 import { DeparturePicker } from "./departure-picker";
@@ -54,6 +57,9 @@ export function TripForm() {
   const [errors, setErrors] = useState<TripFormErrors>({});
   const [attempted, setAttempted] = useState(false);
   const planTrip = usePlanTrip();
+  const navigate = useNavigate();
+  const setPlan = useTripPlanStore((state) => state.setPlan);
+  const resetView = useTripViewStore((state) => state.reset);
 
   function update<K extends keyof TripFormDraft>(
     key: K,
@@ -80,9 +86,15 @@ export function TripForm() {
         load_weight_lbs: values.loadWeightLbs,
       },
       {
-        onSuccess: () => toast.success("Trip submitted"),
+        onSuccess: (plan) => {
+          setPlan(plan);
+          resetView();
+          navigate("/trip");
+        },
         onError: (error) =>
-          toast.error("Couldn't plan the trip", { description: error.message }),
+          toast.error("Couldn't plan the trip", {
+            description: getErrorMessage(error),
+          }),
       },
     );
   }
@@ -153,7 +165,7 @@ export function TripForm() {
 
         <Button type="submit" size="lg" disabled={planTrip.isPending}>
           {planTrip.isPending && <Loader2Icon className="animate-spin" />}
-          Plan route
+          {planTrip.isPending ? "Checking routes and weather…" : "Plan route"}
         </Button>
       </FieldGroup>
     </form>
