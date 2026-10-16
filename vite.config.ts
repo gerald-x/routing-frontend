@@ -15,4 +15,9 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  // Pre-bundle up front, otherwise Vite finds it late and the first load
+  // fails with "Outdated Optimize Dep"
+  optimizeDeps: {
+    include: ['maplibre-gl'],
+  },
 })
